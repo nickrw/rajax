@@ -41,10 +41,11 @@ function rha_ajax(url, params, containm, successcb){
 			if(data['status'] == 'success')
 			{
 				ajimg.attr('src', '/tick.png');
-			} else {
+				ajimg.fadeOut(5000);
+			} else if(data['status'] != 'silent') {
 				ajimg.attr('src', '/cross.png');
+				ajimg.fadeOut(5000);
 			}
-			ajimg.fadeOut(5000);
 		}
 	});
 }
@@ -140,6 +141,10 @@ $(document).ready(function(){
 											$(this).siblings(".RHA.original").attr('value',data['set']);
 											$(this).fadeIn('fast');
 										})
+									}
+									if(data['disable'])
+									{
+										contain.unbind('click');
 									}
 								});
 							}

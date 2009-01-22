@@ -17,7 +17,7 @@ module Ramaze
 		#		text: String to make clickily editable
 		#		params: Hash of parameters to pass through to the ajax controller
 		#		url: url of the ajax controller (default: /ajax/)
-		def click2edit(text = '', params={}, url = 'ajax/')
+		def click2edit(text = '', params={}, url = '/ajax/')
 			output = "<span class='RHA c2e container' id='RHA::c2e::" + Digest::MD5.hexdigest(rand(4398540824).to_s) + "'>\n"
 			output << "<span class='RHA c2e text'>" + text.to_s + "</span>\n"
 			output << "<img class='RHA ajimg' src='/load.gif' style='display:none;' />\n"
@@ -25,13 +25,13 @@ module Ramaze
 			output << "<input class='RHA url' type='hidden' value=#{url.inspect} />\n"
 			params.each do |name, value|
 				name = "RHA::" + name.to_s
-				output << "<input type='hidden' class='RHA c2e param' name=#{name.inspect} value=#{value.inspect} />\n"
+				output << "<input type='hidden' class='RHA c2e param' name=#{name.inspect} value=#{value.to_s.inspect} />\n"
 			end
 			output << "</span>\n"
 			output
 		end
 
-		def click2delete_button(params = {}, url = 'ajax/', confirm = 'Click again to confirm', imgurl = '/delete.png')
+		def click2delete_button(params = {}, url = '/ajax/', confirm = 'Click again to confirm', imgurl = '/delete.png')
 			output = %{
 				<span class='RHA c2d button'>
 					<a href='javascript:void;'><img src='#{imgurl}' class='RHA ajimg' style='border:0px;' alt='Delete item' /></a>
@@ -40,7 +40,7 @@ module Ramaze
 			}
 			params.each do |name, value|
                                 name = "RHA::" + name.to_s
-                                output << "<input type='hidden' class='RHA c2d param' name=#{name.inspect} value=#{value.inspect} />\n"
+                                output << "<input type='hidden' class='RHA c2d param' name=#{name.inspect} value=#{value.to_s.inspect} />\n"
                         end
 			output << %{		<span style='display:none;'>#{confirm}</span>
 				</span>
