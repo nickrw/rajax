@@ -1,0 +1,25 @@
+.RHA.flashbox {
+	position:fixed;
+	top:0px;
+	left:0px;
+	width:100%;
+	display:none;
+	padding: 5px 20px 5px 45px;
+	border-bottom: 2px solid #ffd324;
+	background: #fff6bf url('/exclamation.png') center no-repeat;
+	background-position: 15px 50%;
+	font-weight:bold;
+	text-align:center;
+}
+.RHA.flashbox.hover {
+	position:fixed;
+        top:0px;
+        left:0px;
+        width:100%;
+        padding: 5px 20px 5px 45px;
+        border-bottom: 2px solid #b5d4fe;
+        background: #f8fafc url('/exclamation.png') center no-repeat;
+        background-position: 15px 50%;
+        text-align:center;
+	font-weight:bold;
+}
