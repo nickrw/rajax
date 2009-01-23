@@ -2,15 +2,6 @@ require 'rubygems'
 require 'json'
 require 'digest/md5'
 module Ramaze
-	module Ajax
-		class Reference
-			attr_accessor :table, :uuid_col
-			def initialize(table, uuid_col, uuid)
-				@table = table
-				@uuid_col = uuid_col
-			end
-		end
-	end
 	module Helper::Ajax
 		#
 		#
