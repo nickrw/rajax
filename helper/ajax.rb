@@ -105,13 +105,10 @@ module Ramaze
 			output = {}
 			unless request.POST['RHAtype'].nil?
 				output[:type] = request.POST['RHAtype'].to_sym
-				output[:new] = request.POST['RHA' + output[:type].to_s + '-new']
-				output[:old] = request.POST['RHA' + output[:type].to_s + '-old']
+				output[:new] = request.POST["RHA#{output[:type]}-new"]
+				output[:old] = request.POST["RHA#{output[:type]}-old"]
 				request.POST.each do |key, val|
-					if key.match(/^RHA::/)
-						outkey = key.gsub(/^RHA::/, '').to_sym
-						output[outkey] = val if output[outkey].nil?
-					end
+					output[key.gsub(/^RHA::/, '').to_sym] ||= val if key.match(/^RHA::/)
 				end
 			else
 				output = nil
