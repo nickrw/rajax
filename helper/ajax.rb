@@ -13,10 +13,17 @@ module Ramaze
 	end
 	module Helper::Ajax
 		#
-		#	click2edit(params, text, url, &block)
+		#
+		#	click2edit(text, params, url)
 		#		text: String to make clickily editable
-		#		params: Hash of parameters to pass through to the ajax controller
-		#		url: url of the ajax controller (default: /ajax/)
+		#		params: Hash of parameters to pass through to the ajax controller - :symbols for keys work best
+		#		url: url of the ajax controller (specify where you have mapped your ajax controller - default: '/ajax/')
+		#				you may find it easier to have an action on one controller that deals with all your application's AJAX or 
+		#				have an ajax action for each controller.
+		#
+		#	This helper method returns the HTML required to make the text you pass in editable when clicked. See the comments below regarding
+		#	the parseajaxdata method for params useage
+		#
 		def click2edit(text = '', params={}, url = '/ajax/')
 			output = "<span class='RHA c2e container' id='RHA::c2e::" + Digest::MD5.hexdigest(rand(4398540824).to_s) + "'>\n"
 			output << "<span class='RHA c2e text'>" + text.to_s + "</span>\n"
@@ -30,7 +37,18 @@ module Ramaze
 			output << "</span>\n"
 			output
 		end
-
+		#
+		#
+		#	click2delete_button(params, url, confirm, imgurl)
+		#		params: See click2edit documentation above
+		#		url: See click2edit documentation above
+		#		confirm: String to display instead of 'Click again to confirm' upon first button click
+		#		imgurl: Alternative path for delete button image
+		#
+		#	This helper method returns the HTML for a button to delete a set of data. To define the set of data you wish to delete
+		#	you need to wrap it with the click2delete_wrapper method below. You should use the params here to let the ajax controller
+		#	know what it is meant to be deleting and respond appropriately.
+		#
 		def click2delete_button(params = {}, url = '/ajax/', confirm = 'Click again to confirm', imgurl = '/delete.png')
 			output = %{
 				<span class='RHA c2d button'>
@@ -47,13 +65,51 @@ module Ramaze
 			}
 			output
 		end
+		#
+		#
+		#	click2delete_wrapper(text, tag)
+		#		text: String containing the item to be deleted. Must include the output from click2delete_button
+		#		tag: The HTML tag to wrap the text in, a <div> (:div) by default produces the best results.
+		#			There is somewhat patchy browser support for the effects produced by this when using a :tr (table-row)
+		#
+		#	This method wraps the given text in an HTML container which the ajaxhelper javascript will pick up upon. The delete button HTML
+		#	produced by the click2delete_button method needs to be included in the text for this method to be of any use.
+		#
 		def click2delete_wrapper(text, tag = :div)
 			output = "<#{tag} class='RHA c2d container' id='RHA::c2d::" + Digest::MD5.hexdigest(rand(9398440824).to_s) + "'>\n"
 			output + text + "</#{tag}>"
 		end
+		#
+		#
+		#	scriptlink(scr)
+		#		scr: Optional, give the path to the ajaxhelper.js script. Leave blank for default
+		#
+		#	This method is simply for convenience - it outputs a <script> tag to include the javascript in the page.
+		#
 		def scriptlink(scr = '/js/ajaxhelper.js')
 			"<script type='text/javascript' src='#{scr}'></script>"
 		end
+		#
+		#
+		#	parseajaxdata
+		#		No arguments
+		#
+		#	This method returns a hash of information if it finds an ajax request in the POST data submitted by the browser,
+		#	or nil if none was found. It will contain a few helper-set keys depending on the request type (:type will always be set).
+		#
+		#	Type may return as:
+		#		:click2edit, :click2delete
+		#	Other reserved keys are:
+		#		:new - will be set if this is a click2edit request. This is the value that the user changed the text to.
+		#		:old - will be set if this is a click2edit request. This is the original value of the text.d
+		#
+		#	Items you pass into an ajax creation method in the params hash will be available in the hash returned by parseajaxdata,
+		#	so long as they aren't using one of the above reserved keys.
+		#	E.G. This ajax creation method call:
+		#		click2edit('some text', {:foo => 'bar', 'second' => 'item'})
+		#	would have this hash returned by parseajaxdata:
+		#		{:type => :click2edit, :new => 'whatever was typed in', :old => 'some text', :foo => 'bar', :second => 'item'}
+		#
 		def parseajaxdata
 			output = {}
 			unless request.POST['RHAtype'].nil?
@@ -71,8 +127,29 @@ module Ramaze
 			end
 			output
 		end
-		def ajaxreturn(returnst, others={})
-			{:status => returnst}.merge(others).to_json
+		#
+		#
+		#	ajaxreturn(returnstatus, otherparams)
+		#		returnstatus: Indicate whether this ajax request has been successful or not by giving either:
+		#				:success - Inform script that request was successful
+		#				:error - Inform script that the request was not successful
+		#				:silent - Same as :error, except the script will not mark it as failed (red cross)
+		#		otherparams: A hash of other parameters which the script may act upon. Different options are available for each type
+		#			All items will accept:
+		#				:message - Displays the message using the rha_error(); javascript function.
+		#					Especially useful when returning with an :error status to give the user a friendly explanation as to why
+		#
+		#			Additionally click2edit will accept:
+		#				:set - String to change the text to. Return :error and set :set to the original text value to reject the new input and
+		#					have it changed back to the original contents.
+		#				:disable - Prevent any further text changes by setting this to true.
+		#
+		#	This method returns the data given in the appropriate JSON format. You should respond directly with this return with no template.
+		#	E.G.
+		#		respond ajaxreturn(:success, {:disable => true})
+		#
+		def ajaxreturn(returnstatus, otherparams={})
+			{:status => returnstatus}.merge(otherparams).to_json
 		end
 	end
 end
