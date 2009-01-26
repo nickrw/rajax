@@ -61,7 +61,9 @@ module Ramaze
     #  produced by the click2delete_button method needs to be included in the text for this method to be of any use.
     #
     def click2delete_wrapper(text, tag = :div)
-      Ramaze::Log.warn "Be careful using the :tr tag with the click2delete wrapper, it does not render properly in all browsers."
+      if tag == :tr
+        Ramaze::Log.warn "Be careful using the :tr tag with the click2delete wrapper, it does not render properly in all browsers."
+      end
       "<#{tag} class='RHA c2d container' id='RHA::c2d::#{Digest::MD5.hexdigest(rand(9398440824).to_s)}'>#{text}</#{tag}>"
     end
     #
