@@ -71,6 +71,11 @@ module Ramaze
     end
     #
     #
+    def ajaxform(form, url='/ajax/', style='display:block;')
+      "<form action='#{url}' method='post' style='#{style}' class='RHA form container'>" + form.to_s + "</form>"
+    end
+    #
+    #
     #  scriptlink(scr)
     #    scr: Optional, give the path to the ajaxhelper.js script. Leave blank for default
     #

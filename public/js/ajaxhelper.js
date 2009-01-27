@@ -66,6 +66,52 @@ $(document).ready(function(){
 
 	var lastrha = 'none';
 
+	// ajaxform setup
+	$(".RHA.form.container").each(function(i){
+		$(this).find(":submit").after("<img src='/ajimg/load.gif' alt='Loading...' style='display:none;' class='RHA ajimg' />");
+	});
+	$(".RHA.form.container").submit(function(event){
+		container = $(this);
+		ajimg = container.find(".RHA.ajimg");
+		submit = container.find(":submit")
+		submit.attr('disabled', 'disabled');
+		ajimg.fadeIn('fast');
+		params = {}
+		container.find(":input").each(function(i){
+			if($(this).attr('name') != '') {
+				params['RHA::' + $(this).attr('name')] = $(this).attr('value')
+			}
+		});
+		params["RHAtype"] = 'ajaxform';
+		url = container.attr('action');
+		rha_ajax(url, params, container, function(data){
+			if(data['replace'] || data['append'])
+			{
+				$(".RHA.form.replace").slideUp('slow', function(){
+					$(this).remove();
+				});
+				if(data['replace'])
+				{
+					container.slideUp('slow', function(){
+						$(this).html("<div class='RHA form replace' style=''>"+data['replace']+"</div>");
+						$(this).slideDown('slow')
+					});
+				}
+				if(data['append'])
+				{
+					container.after("<div class='RHA form replace' style='display:none;'>"+data['append']+"</div>");
+					$(".RHA.form.replace").slideDown('slow')
+				}
+				if(!data['disable'])
+				{
+					submit.removeAttr('disabled');
+				}
+			}
+		})
+		event.preventDefault();
+		return false;
+	});
+
 	// click2delete setup
 	$(".RHA.c2d.button > a").click(function(event){
 		event.preventDefault();
