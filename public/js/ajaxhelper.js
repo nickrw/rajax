@@ -1,4 +1,8 @@
-var fbcount = 0
+var fbcount = 0; // Maintain separate ajax flashboxen
+
+// rha_error(message): Display ajax flashbox with given message.
+// This will add a div with the class 'RHAfb' to the start of the <body>. Style this as you wish.
+// 'RHAfb.hover' class is used while the mouse is over the element.
 function rha_error(message)
 {
 	fbcount = fbcount + 1;
@@ -21,6 +25,10 @@ function rha_error(message)
 	});
         //alert(message);
 }
+
+// rha_ajax(url, perams, containm, successcb)
+// Send/receive ajax data (params) to given url.
+// container jQuery object must be supplied, along with a callback to fire on successful data return.
 function rha_ajax(url, params, containm, successcb){
 	ajimg = containm.find(".RHA.ajimg")
 	ajimg.attr('src','/load.gif') // Set ajax images to loading icons
@@ -46,46 +54,74 @@ function rha_ajax(url, params, containm, successcb){
 				ajimg.attr('src', '/cross.png');
 				ajimg.fadeOut(5000);
 			}
+			if(data['message']) {
+				rha_error(data['message']);
+			}
 		}
 	});
 }
+
+// Set up events when document is ready
 $(document).ready(function(){
+
 	var lastrha = 'none';
+
+	// click2delete setup
 	$(".RHA.c2d.button > a").click(function(event){
 		event.preventDefault();
 		container = $(this).parents('.RHA.c2d.container');
 		container_tag = '';
 		container.each(function(){
+			// Needed to determine the type of fade. TRs don't slideUp well.
 			container_tag = this.tagName;
 		});
 		ajimg = container.find('.RHA.ajimg');
-		ajimg.attr('src', '/load.gif');
 		ajurl = container.find('.RHA.url').attr('value');
 		params = {};
-		paramsjq = container.find(".RHA.c2d.param");
+		paramsjq = container.find(".RHA.c2d.param"); // Find parameters for ajax request
 		paramsjq.each(function(i){
 			params[$(this).attr('name')] = $(this).attr('value');
 		})
 		params["RHAtype"] = 'click2delete';
-		rha_ajax(ajurl, params, container, function(data){
-			if(data['status'] == 'success')
+		button = container.find('.RHA.c2d.button > a > img');
+		buttonoff = button.offset();
+		doajax = false;
+		if(container.find('.RHA.c2d.confirm.set').attr('value') == '1')
+		{
+			clicks = container.find('.RHA.c2d.confirm.clicks')
+			if(clicks.attr('value') == '1')
 			{
-				if(container_tag == 'TR')
-				{
-					container.fadeOut('slow', function(){
-						$(this).remove();
-					});
-				} else {
-					container.slideUp('slow', function(){
-						$(this).remove();
-					});
-				}
-			} else if(data['message']) {
-				ajimg.attr('src', '/delete.png').fadeIn('fast')
-				rha_error(data['message']);
+				doajax = true;
+			} else {
+				clicks.attr('value', '1')
 			}
-		});
+		} else {
+			doajax = true;
+		}
+		if(doajax)
+		{
+			ajimg.attr('src', '/load.gif');
+			rha_ajax(ajurl, params, container, function(data){
+				if(data['status'] == 'success')
+				{
+					if(container_tag == 'TR')
+					{
+						container.fadeOut('slow', function(){
+							$(this).remove();
+						});
+					} else {
+						container.slideUp('slow', function(){
+							$(this).remove();
+						});
+					}
+				} else if(data['message']) {
+					ajimg.attr('src', '/delete.png').fadeIn('fast')
+				}
+			});
+		}
 	});
+	
+	// click2edit setup
 	$(".RHA.c2e.container").click(function(event){
 		id = $(this).attr('id');
 		container = $(this);
@@ -130,10 +166,6 @@ $(document).ready(function(){
 								params["RHAclick2edit-old"] = oldval
 								rha_ajax(ajurl, params, $(this).parents('.RHA.c2e.container'), function(data, contain){
 									// Success callback
-									if(data['message'])
-									{
-											rha_error(data['message']);
-									}
 									if(data['set'])
 									{
 										contain.find('.RHA.c2e.text').fadeOut('fast', function(){

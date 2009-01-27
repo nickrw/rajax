@@ -33,21 +33,24 @@ module Ramaze
     #  click2delete_button(params, url, confirm, imgurl)
     #    params: See click2edit documentation above
     #    url: See click2edit documentation above
-    #    confirm: String to display instead of 'Click again to confirm' upon first button click
+    #    confirm: true to require double click to delete
     #    imgurl: Alternative path for delete button image
     #
     #  This helper method returns the HTML for a button to delete a set of data. To define the set of data you wish to delete
     #  you need to wrap it with the click2delete_wrapper method below. You should use the params here to let the ajax controller
     #  know what it is meant to be deleting and respond appropriately.
     #
-    def click2delete_button(params = {}, url = '/ajax/', confirm = 'Click again to confirm', imgurl = '/delete.png')
+    def click2delete_button(params = {}, url = '/ajax/', confirm = 0, imgurl = '/delete.png')
+      confirm = 1 if confirm == true
+      confirm = 0 if confirm == false
       output = "<span class='RHA c2d button'><a href='javascript:void;'><img src='#{imgurl}' class='RHA ajimg' style='border:0px;' alt='Delete item' /></a>"
-      output << "<input class='RHA c2d confirm' type='hidden' value='0' /><input class='RHA url' type='hidden' value='#{url}' />"
+      output << "<input class='RHA c2d confirm set' type='hidden' value='#{confirm}' /><input class='RHA c2d confirm clicks' type='hidden' value='0' />"
+      output << "<input class='RHA url' type='hidden' value='#{url}' />"
       params.each do |name, value|
         name = "RHA::" + name.to_s
         output << "<input type='hidden' class='RHA c2d param' name=#{name.inspect} value=#{value.to_s.inspect} />\n"
       end
-      output << "<span style='display:none;'>#{confirm}</span></span>"
+      output << "<div class='RHA c2d confirm text' style='display:none;color:white;background-color:red;font-weight:bold;'>#{confirm}</div></span>"
       output
     end
     #
@@ -133,7 +136,13 @@ module Ramaze
     #    respond ajaxreturn(:success, {:disable => true})
     #
     def ajaxreturn(returnstatus, otherparams={})
-      {:status => returnstatus}.merge(otherparams).to_json
+      deliver = {:status => returnstatus}.merge(otherparams)
+      if deliver.respond_to?('to_json')
+        deliver.to_json
+      else
+        Ramaze::Log.warn 'Ramaze::Helper::Ajax requires JSON support: http://json.rubyforge.org/.'
+        '{"status":"error","message":"Ramaze::Helper::Ajax requires JSON support: http:\/\/json.rubyforge.org\/."}'
+      end
     end
   end
 end
