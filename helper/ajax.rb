@@ -18,7 +18,7 @@ module Ramaze
     def click2edit(text = '', params={}, url = '/ajax/')
       output = "<span class='RHA c2e container' id='RHA::c2e::" + Digest::MD5.hexdigest(rand(4398540824).to_s) + "'>\n"
       output << "<span class='RHA c2e text'>" + text.to_s + "</span>\n"
-      output << "<img class='RHA ajimg' src='/load.gif' style='display:none;' />\n"
+      output << "<img class='RHA ajimg' src='/ajimg/load.gif' style='display:none;' />\n"
       output << "<input class='RHA original' type='hidden' value=#{text.inspect} />\n"
       output << "<input class='RHA url' type='hidden' value=#{url.inspect} />\n"
       params.each do |name, value|
@@ -40,7 +40,7 @@ module Ramaze
     #  you need to wrap it with the click2delete_wrapper method below. You should use the params here to let the ajax controller
     #  know what it is meant to be deleting and respond appropriately.
     #
-    def click2delete_button(params = {}, url = '/ajax/', confirm = 0, imgurl = '/delete.png')
+    def click2delete_button(params = {}, url = '/ajax/', confirm = 0, imgurl = '/ajimg/delete.png')
       confirm = 1 if confirm == true
       confirm = 0 if confirm == false
       output = "<span class='RHA c2d button'><a href='javascript:void;'><img src='#{imgurl}' class='RHA ajimg' style='border:0px;' alt='Delete item' /></a>"

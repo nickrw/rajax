@@ -31,10 +31,10 @@ function rha_error(message)
 // container jQuery object must be supplied, along with a callback to fire on successful data return.
 function rha_ajax(url, params, containm, successcb){
 	ajimg = containm.find(".RHA.ajimg")
-	ajimg.attr('src','/load.gif') // Set ajax images to loading icons
+	ajimg.attr('src','/ajimg/load.gif') // Set ajax images to loading icons
 	ajimg.fadeIn('fast')
 	ajimg.ajaxError(function(event, request, settings, emsg){
-		$(this).attr('src','/cross.png');
+		$(this).attr('src','/ajimg/cross.png');
 		$(this).fadeOut(5000);
 		rha_error("An AJAX error occured: " + request.status);
 	});
@@ -48,10 +48,10 @@ function rha_ajax(url, params, containm, successcb){
 			successcb(data,containm);
 			if(data['status'] == 'success')
 			{
-				ajimg.attr('src', '/tick.png');
+				ajimg.attr('src', '/ajimg/tick.png');
 				ajimg.fadeOut(5000);
 			} else if(data['status'] != 'silent') {
-				ajimg.attr('src', '/cross.png');
+				ajimg.attr('src', '/ajimg/cross.png');
 				ajimg.fadeOut(5000);
 			}
 			if(data['message']) {
@@ -100,7 +100,7 @@ $(document).ready(function(){
 		}
 		if(doajax)
 		{
-			ajimg.attr('src', '/load.gif');
+			ajimg.attr('src', '/ajimg/load.gif');
 			rha_ajax(ajurl, params, container, function(data){
 				if(data['status'] == 'success')
 				{
@@ -115,7 +115,7 @@ $(document).ready(function(){
 						});
 					}
 				} else if(data['message']) {
-					ajimg.attr('src', '/delete.png').fadeIn('fast')
+					ajimg.attr('src', '/ajimg/delete.png').fadeIn('fast')
 				}
 			});
 		}
