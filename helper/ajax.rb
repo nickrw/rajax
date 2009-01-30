@@ -71,7 +71,15 @@ module Ramaze
     end
     #
     #
-    def ajaxform(form, url='/ajax/', style='display:block;')
+    #  ajaxform(form, url, style)
+    #    form: The HTML to wrap in a form - this should not include <form> tags
+    #    url: The URL to send the ajax request to
+    #    style: Style options to be added to the <form> tag. Default display:inline;
+    #
+    #  The ajaxform method creates a form around your inputs which will send data via ajax and display results
+    #  without loading a new page. See ajaxreturn parameters below.
+    #  
+    def ajaxform(form, url='/ajax/', style='display:inline;')
       "<form action='#{url}' method='post' style='#{style}' class='RHA form container'>" + form.to_s + "</form>"
     end
     #
@@ -135,6 +143,11 @@ module Ramaze
     #        :set - String to change the text to. Return :error and set :set to the original text value to reject the new input and
     #          have it changed back to the original contents.
     #        :disable - Prevent any further text changes by setting this to true.
+    #
+    #      Additionally ajaxform will accept:
+    #        :replace - The HTML to replace the form with (animated)
+    #        :append  - The HTML to place after the form (animated)
+    #        :disable - Set to true to have the submit button(s) remain disabled after the ajax transaction has finished.
     #
     #  This method returns the data given in the appropriate JSON format. You should respond directly with this return with no template.
     #  E.G.
