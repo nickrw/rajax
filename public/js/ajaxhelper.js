@@ -67,7 +67,7 @@ $(document).ready(function(){
 
         // ajaxform setup
         $(".RHA.form.container").each(function(i){
-                $(this).find(":submit").after("<img src='/ajimg/load.gif' alt='Loading...' style='display:none;' class='RHA ajimg' />");
+                $(this).find(":submit").after("<img src='/ajimg/load.gif' alt='Loading...' style='display:none;' class='RHA ajimg form' />");
         });
         $(".RHA.form.container").submit(function(event){
                 container = $(this);
