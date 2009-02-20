@@ -1,3 +1,12 @@
+/*
+*
+* Rajax (Ramaze::Helper::Ajax) - ramaze ajax assistant
+* Pre-release version
+*
+* Nick Robinson-Wall 2008
+*
+*/
+
 var fbcount = 0; // Maintain separate ajax flashboxen
 
 // rha_error(message): Display ajax flashbox with given message.

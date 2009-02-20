@@ -1,10 +1,14 @@
+# Rajax (Ramaze::Helper::Ajax), pre-release version
+# Nick Robinson-wall (nickrw) 2009
+
+# Rajax depends upon the ruby json module: http://json.rubyforge.org/
+
 require 'rubygems'
 require 'json'
 require 'digest/md5'
+
 module Ramaze
   module Helper::Ajax
-    #
-    #
     #  click2edit(text, params, url)
     #    text: String to make clickily editable
     #    params: Hash of parameters to pass through to the ajax controller - :symbols for keys work best
@@ -28,8 +32,7 @@ module Ramaze
       output << "</span>\n"
       output
     end
-    #
-    #
+    
     #  click2delete_button(params, url, confirm, imgurl)
     #    params: See click2edit documentation above
     #    url: See click2edit documentation above
@@ -53,8 +56,7 @@ module Ramaze
       output << "<div class='RHA c2d confirm text' style='display:none;color:white;background-color:red;font-weight:bold;'>#{confirm}</div></span>"
       output
     end
-    #
-    #
+    
     #  click2delete_wrapper(text, tag)
     #    text: String containing the item to be deleted. Must include the output from click2delete_button
     #    tag: The HTML tag to wrap the text in, a <div> (:div) by default produces the best results.
@@ -69,8 +71,7 @@ module Ramaze
       end
       "<#{tag} class='RHA c2d container' id='RHA::c2d::#{Digest::MD5.hexdigest(rand(9398440824).to_s)}'>#{text}</#{tag}>"
     end
-    #
-    #
+    
     #  ajaxform(form, url, style)
     #    form: The HTML to wrap in a form - this should not include <form> tags
     #    url: The URL to send the ajax request to
@@ -82,8 +83,7 @@ module Ramaze
     def ajaxform(form, url='/ajax/', style='display:inline;')
       "<form action='#{url}' method='post' style='#{style}' class='RHA form container'>" + form.to_s + "</form>"
     end
-    #
-    #
+    
     #  scriptlink(scr)
     #    scr: Optional, give the path to the ajaxhelper.js script. Leave blank for default
     #
@@ -92,8 +92,7 @@ module Ramaze
     def scriptlink(scr = '/js/ajaxhelper.js')
       "<script type='text/javascript' src='#{scr}'></script>"
     end
-    #
-    #
+    
     #  parseajaxdata
     #    No arguments
     #
@@ -127,8 +126,7 @@ module Ramaze
       end
       output
     end
-    #
-    #
+    
     #  ajaxreturn(returnstatus, otherparams)
     #    returnstatus: Indicate whether this ajax request has been successful or not by giving either:
     #        :success - Inform script that request was successful
